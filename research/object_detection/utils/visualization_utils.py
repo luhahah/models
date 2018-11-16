@@ -820,6 +820,8 @@ class EvalMetricOpsVisualization(object):
       groundtruth. Each `value_op` holds the tf.summary.image string for a given
       image.
     """
+    if self._max_examples_to_draw == 0:
+      return {}
     images = self.images_from_evaluation_dict(eval_dict)
 
     def get_images():

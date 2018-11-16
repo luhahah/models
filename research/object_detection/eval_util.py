@@ -26,6 +26,7 @@ from object_detection.core import keypoint_ops
 from object_detection.core import standard_fields as fields
 from object_detection.metrics import coco_evaluation
 from object_detection.utils import label_map_util
+from object_detection.utils import object_detection_evaluation
 from object_detection.utils import ops
 from object_detection.utils import shape_utils
 from object_detection.utils import visualization_utils as vis_utils
@@ -40,6 +41,18 @@ EVAL_METRICS_CLASS_DICT = {
         coco_evaluation.CocoDetectionEvaluator,
     'coco_mask_metrics':
         coco_evaluation.CocoMaskEvaluator,
+    'oid_challenge_detection_metrics':
+        object_detection_evaluation.OpenImagesDetectionChallengeEvaluator,
+    'pascal_voc_detection_metrics':
+        object_detection_evaluation.PascalDetectionEvaluator,
+    'weighted_pascal_voc_detection_metrics':
+        object_detection_evaluation.WeightedPascalDetectionEvaluator,
+    'pascal_voc_instance_segmentation_metrics':
+        object_detection_evaluation.PascalInstanceSegmentationEvaluator,
+    'weighted_pascal_voc_instance_segmentation_metrics':
+        object_detection_evaluation.WeightedPascalInstanceSegmentationEvaluator,
+    'oid_V2_detection_metrics':
+        object_detection_evaluation.OpenImagesDetectionEvaluator,
 }
 
 EVAL_DEFAULT_METRIC = 'coco_detection_metrics'

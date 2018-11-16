@@ -243,12 +243,17 @@ def create_model_fn(detection_model_fn, configs, hparams, use_tpu=False):
       gt_weights_list = None
       if fields.InputDataFields.groundtruth_weights in labels:
         gt_weights_list = labels[fields.InputDataFields.groundtruth_weights]
+      gt_confidences_list = None
+      if fields.InputDataFields.groundtruth_confidences in labels:
+        gt_confidences_list = labels[
+            fields.InputDataFields.groundtruth_confidences]
       gt_is_crowd_list = None
       if fields.InputDataFields.groundtruth_is_crowd in labels:
         gt_is_crowd_list = labels[fields.InputDataFields.groundtruth_is_crowd]
       detection_model.provide_groundtruth(
           groundtruth_boxes_list=gt_boxes_list,
           groundtruth_classes_list=gt_classes_list,
+          groundtruth_confidences_list=gt_confidences_list,
           groundtruth_masks_list=gt_masks_list,
           groundtruth_keypoints_list=gt_keypoints_list,
           groundtruth_weights_list=gt_weights_list,
@@ -445,6 +450,15 @@ def create_model_fn(detection_model_fn, configs, hparams, use_tpu=False):
           eval_metrics=eval_metric_ops,
           export_outputs=export_outputs)
     else:
+      if scaffold is None:
+        keep_checkpoint_every_n_hours = (
+            train_config.keep_checkpoint_every_n_hours)
+        saver = tf.train.Saver(
+            sharded=True,
+            keep_checkpoint_every_n_hours=keep_checkpoint_every_n_hours,
+            save_relative_paths=True)
+        tf.add_to_collection(tf.GraphKeys.SAVERS, saver)
+        scaffold = tf.train.Scaffold(saver=saver)
       return tf.estimator.EstimatorSpec(
           mode=mode,
           predictions=detections,
